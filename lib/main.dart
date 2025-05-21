@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'screens/chat_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/workout_screen.dart';
+import 'screens/settings_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'providers/chat_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,7 +70,7 @@ class WelcomeScreen extends StatelessWidget {
             const SizedBox(height: 60),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const UserInfoScreen()),
                 );
@@ -83,6 +87,62 @@ class WelcomeScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const WorkoutScreen(),
+    const ChatScreen(),
+    const SettingsScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '홈',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.fitness_center),
+            label: '운동',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: '챗봇',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: '설정',
+          ),
+        ],
       ),
     );
   }
@@ -296,6 +356,13 @@ class _TargetAreaScreenState extends State<TargetAreaScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => const DetailedShoulderScreen(),
+        ),
+      );
+    } else if (area == '전신') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const FullBodyWorkoutScreen(),
         ),
       );
     } else {
@@ -558,6 +625,34 @@ class WorkoutStartScreen extends StatelessWidget {
     this.subArea,
   });
 
+  void _startWorkout(BuildContext context) {
+    // 웹 데모 페이지를 새 창에서 열기
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('운동 시작'),
+        content: const Text('운동을 시작하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('취소'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // 웹 데모 페이지 열기
+              launchUrl(
+                Uri.parse('http://localhost:5000/fitbuddy_web_demo/index.html'),
+                mode: LaunchMode.externalApplication,
+              );
+            },
+            child: const Text('시작'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -577,12 +672,7 @@ class WorkoutStartScreen extends StatelessWidget {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ChatScreen()),
-                );
-              },
+              onPressed: () => _startWorkout(context),
               child: const Text('네', style: TextStyle(fontSize: 18)),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
@@ -590,6 +680,128 @@ class WorkoutStartScreen extends StatelessWidget {
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FullBodyWorkoutScreen extends StatefulWidget {
+  const FullBodyWorkoutScreen({super.key});
+
+  @override
+  State<FullBodyWorkoutScreen> createState() => _FullBodyWorkoutScreenState();
+}
+
+class _FullBodyWorkoutScreenState extends State<FullBodyWorkoutScreen> {
+  String? _selectedWorkout;
+
+  final List<Map<String, dynamic>> _workouts = [
+    {
+      'name': '스쿼트',
+      'description': '하체와 코어를 강화하는 기본 운동',
+      'icon': Icons.fitness_center,
+    },
+    {
+      'name': '푸시업',
+      'description': '상체와 코어를 강화하는 기본 운동',
+      'icon': Icons.sports_gymnastics,
+    },
+    {
+      'name': '플랭크',
+      'description': '코어와 전신 안정성을 강화하는 운동',
+      'icon': Icons.accessibility_new,
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('전신 운동'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              '원하는 운동을 선택해주세요',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 32),
+            ..._workouts.map((workout) => Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Card(
+                elevation: 4,
+                child: RadioListTile<String>(
+                  title: Row(
+                    children: [
+                      Icon(workout['icon'], color: Colors.blue),
+                      const SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            workout['name'],
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            workout['description'],
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  value: workout['name'],
+                  groupValue: _selectedWorkout,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedWorkout = value;
+                    });
+                  },
+                  activeColor: Colors.blue,
+                ),
+              ),
+            )).toList(),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: _selectedWorkout == null
+                  ? null
+                  : () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WorkoutStartScreen(
+                            area: '전신',
+                            subArea: _selectedWorkout!,
+                          ),
+                        ),
+                      );
+                    },
+              child: const Text('다음', style: TextStyle(fontSize: 18)),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),

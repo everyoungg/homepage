@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import openai
 import os
@@ -30,6 +30,10 @@ def chat():
         return jsonify({"reply": response["choices"][0]["message"]["content"]})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/fitbuddy_web_demo/<path:path>')
+def serve_web_demo(path):
+    return send_from_directory('../fitbuddy_web_demo', path)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000) 
