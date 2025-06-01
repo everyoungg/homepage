@@ -1,0 +1,12 @@
+{
+  "name": "fitbuddy-server",
+  "version": "1.0.0",
+  "description": "Server for FitBuddy web demo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

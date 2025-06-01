@@ -160,6 +160,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   String _name = '';
   String _age = '';
   String _height = '';
+  String _weight = '';
   String _gender = '';
 
   @override
@@ -195,6 +196,13 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                 keyboardType: TextInputType.number,
                 onSaved: (value) => _height = value ?? '',
                 validator: (value) => value == null || value.isEmpty ? '키를 입력하세요' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                decoration: const InputDecoration(labelText: '몸무게 (kg)'),
+                keyboardType: TextInputType.number,
+                onSaved: (value) => _weight = value ?? '',
+                validator: (value) => value == null || value.isEmpty ? '몸무게를 입력하세요' : null,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
@@ -335,30 +343,14 @@ class _TargetAreaScreenState extends State<TargetAreaScreen> {
     '어깨',
     '가슴',
     '다리',
-    '등',
     '복부',
-    '엉덩이',
     '전신',
   ];
 
   final Set<String> _selectedAreas = {};
 
   void _navigateToNextScreen(String area) {
-    if (area == '팔') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const DetailedArmScreen(),
-        ),
-      );
-    } else if (area == '어깨') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const DetailedShoulderScreen(),
-        ),
-      );
-    } else if (area == '전신') {
+    if (area == '전신') {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -642,7 +634,7 @@ class WorkoutStartScreen extends StatelessWidget {
               Navigator.pop(context);
               // 웹 데모 페이지 열기
               launchUrl(
-                Uri.parse('http://localhost:5000/fitbuddy_web_demo/index.html'),
+                Uri.parse('http://localhost:8000/workout.html'),
                 mode: LaunchMode.externalApplication,
               );
             },
@@ -707,9 +699,9 @@ class _FullBodyWorkoutScreenState extends State<FullBodyWorkoutScreen> {
       'icon': Icons.fitness_center,
     },
     {
-      'name': '푸시업',
-      'description': '상체와 코어를 강화하는 기본 운동',
-      'icon': Icons.sports_gymnastics,
+      'name': '런지',
+      'description': '하체 근력과 균형 감각을 향상하는 운동',
+      'icon': Icons.fitness_center,
     },
     {
       'name': '플랭크',
