@@ -2,6 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/WorkoutSession.css';
 
+// MediaPipe Pose 모델 타입 정의
+interface PoseLandmark {
+  x: number;
+  y: number;
+  z: number;
+  visibility?: number;
+}
+
+interface PoseResults {
+  poseLandmarks: PoseLandmark[];
+}
+
 
 const WorkoutSession: React.FC = () => {
   const navigate = useNavigate();
@@ -13,6 +25,8 @@ const WorkoutSession: React.FC = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [poseAnalysis, setPoseAnalysis] = useState<string>('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const exerciseData = {
     plank: {
@@ -207,9 +221,15 @@ const WorkoutSession: React.FC = () => {
     startCamera();
     // 3초 후 첫 피드백 시작
     setTimeout(() => {
-      generateFeedback();
-      // 10초마다 피드백 업데이트
-      setInterval(generateFeedback, 10000);
+      if (exerciseId === 'squats') {
+        // 스쿼트일 때는 자세 분석 시작
+        setIsAnalyzing(true);
+        setPoseAnalysis('자세를 분석하고 있습니다...');
+      } else {
+        generateFeedback();
+        // 10초마다 피드백 업데이트
+        setInterval(generateFeedback, 10000);
+      }
     }, 3000);
   };
 
@@ -222,6 +242,85 @@ const WorkoutSession: React.FC = () => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // 스쿼트 자세 분석 함수
+  const analyzeSquatPose = (landmarks: PoseLandmark[]) => {
+    if (!landmarks || landmarks.length < 33) return '자세를 인식할 수 없습니다.';
+
+    // MediaPipe Pose 인덱스
+    const LEFT_SHOULDER = 11;
+    const LEFT_ELBOW = 13;
+    const LEFT_WRIST = 15;
+    const LEFT_HIP = 23;
+    const LEFT_KNEE = 25;
+    const LEFT_ANKLE = 27;
+    const RIGHT_SHOULDER = 12;
+    const RIGHT_ELBOW = 14;
+    const RIGHT_WRIST = 16;
+    const RIGHT_HIP = 24;
+    const RIGHT_KNEE = 26;
+    const RIGHT_ANKLE = 28;
+
+    // 좌표 추출
+    const ls = landmarks[LEFT_SHOULDER];
+    const le = landmarks[LEFT_ELBOW];
+    const lh = landmarks[LEFT_HIP];
+    const lk = landmarks[LEFT_KNEE];
+    const la = landmarks[LEFT_ANKLE];
+    const rs = landmarks[RIGHT_SHOULDER];
+    const re = landmarks[RIGHT_ELBOW];
+    const rh = landmarks[RIGHT_HIP];
+    const rk = landmarks[RIGHT_KNEE];
+    const ra = landmarks[RIGHT_ANKLE];
+
+    // 분석 조건들
+    let feedback = [];
+    let score = 0;
+
+    // 1. 무릎이 발끝을 넘지 않는지 확인
+    const kneeOverToe = (lk.x > la.x) || (rk.x > ra.x);
+    if (kneeOverToe) {
+      feedback.push('무릎이 발끝을 넘고 있습니다. 뒤로 앉아주세요.');
+    } else {
+      score += 25;
+    }
+
+    // 2. 무릎 각도 확인 (스쿼트 깊이)
+    const leftKneeAngle = Math.atan2(Math.abs(lk.y - lh.y), Math.abs(lk.x - lh.x));
+    const rightKneeAngle = Math.atan2(Math.abs(rk.y - rh.y), Math.abs(rk.x - rh.x));
+    const avgKneeAngle = (leftKneeAngle + rightKneeAngle) / 2;
+    
+    if (avgKneeAngle < 0.5) { // 너무 얕은 스쿼트
+      feedback.push('더 깊게 앉아주세요.');
+    } else if (avgKneeAngle > 1.2) { // 너무 깊은 스쿼트
+      feedback.push('너무 깊게 앉지 마세요.');
+    } else {
+      score += 25;
+    }
+
+    // 3. 등이 곧은지 확인
+    const backStraight = Math.abs(lh.y - ls.y) < 0.1 && Math.abs(rh.y - rs.y) < 0.1;
+    if (!backStraight) {
+      feedback.push('등을 곧게 펴주세요.');
+    } else {
+      score += 25;
+    }
+
+    // 4. 발꿈치가 바닥에 닿아있는지 확인
+    const heelsOnGround = la.y > 0.9 && ra.y > 0.9;
+    if (!heelsOnGround) {
+      feedback.push('발꿈치를 바닥에서 떼지 마세요.');
+    } else {
+      score += 25;
+    }
+
+    // 결과 반환
+    if (feedback.length === 0) {
+      return `완벽한 스쿼트 자세입니다! (점수: ${score}/100)`;
+    } else {
+      return `${feedback.join(' ')} (점수: ${score}/100)`;
+    }
   };
 
   return (
@@ -262,10 +361,19 @@ const WorkoutSession: React.FC = () => {
 
       <div className="feedback-section">
         <div className="feedback-display">
-          <h3>AI 피드백</h3>
+          <h3>{exerciseId === 'squats' ? '자세 분석' : 'AI 피드백'}</h3>
           <div className={`feedback-text ${isSpeaking ? 'speaking' : ''}`}>
-            {currentFeedback || '운동을 시작하면 AI가 자세를 분석하고 피드백을 제공합니다.'}
+            {exerciseId === 'squats' 
+              ? (poseAnalysis || '스쿼트 자세를 분석하고 있습니다...')
+              : (currentFeedback || '운동을 시작하면 AI가 자세를 분석하고 피드백을 제공합니다.')
+            }
           </div>
+          {exerciseId === 'squats' && isAnalyzing && (
+            <div className="analysis-status">
+              <div className="loading-spinner"></div>
+              <p>실시간 자세 분석 중...</p>
+            </div>
+          )}
         </div>
       </div>
 
