@@ -221,10 +221,10 @@ const WorkoutSession: React.FC = () => {
     startCamera();
     // 3초 후 첫 피드백 시작
     setTimeout(() => {
-      if (exerciseId === 'squats') {
-        // 스쿼트일 때는 자세 분석 시작
+      if (exerciseId === 'plank') {
+        // 플랭크일 때는 자세 분석 시작
         setIsAnalyzing(true);
-        setPoseAnalysis('자세를 분석하고 있습니다...');
+        setPoseAnalysis('플랭크 자세를 분석하고 있습니다...');
       } else {
         generateFeedback();
         // 10초마다 피드백 업데이트
@@ -244,8 +244,8 @@ const WorkoutSession: React.FC = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // 스쿼트 자세 분석 함수
-  const analyzeSquatPose = (landmarks: PoseLandmark[]) => {
+  // 플랭크 자세 분석 함수
+  const analyzePlankPose = (landmarks: PoseLandmark[]) => {
     if (!landmarks || landmarks.length < 33) return '자세를 인식할 수 없습니다.';
 
     // MediaPipe Pose 인덱스
@@ -278,46 +278,51 @@ const WorkoutSession: React.FC = () => {
     let feedback = [];
     let score = 0;
 
-    // 1. 무릎이 발끝을 넘지 않는지 확인
-    const kneeOverToe = (lk.x > la.x) || (rk.x > ra.x);
-    if (kneeOverToe) {
-      feedback.push('무릎이 발끝을 넘고 있습니다. 뒤로 앉아주세요.');
-    } else {
-      score += 25;
-    }
-
-    // 2. 무릎 각도 확인 (스쿼트 깊이)
-    const leftKneeAngle = Math.atan2(Math.abs(lk.y - lh.y), Math.abs(lk.x - lh.x));
-    const rightKneeAngle = Math.atan2(Math.abs(rk.y - rh.y), Math.abs(rk.x - rh.x));
-    const avgKneeAngle = (leftKneeAngle + rightKneeAngle) / 2;
+    // 1. 몸이 일직선인지 확인 (어깨-엉덩이-발목)
+    const leftAlignment = Math.abs(ls.y - lh.y) < 0.05 && Math.abs(lh.y - la.y) < 0.05;
+    const rightAlignment = Math.abs(rs.y - rh.y) < 0.05 && Math.abs(rh.y - ra.y) < 0.05;
+    const bodyStraight = leftAlignment && rightAlignment;
     
-    if (avgKneeAngle < 0.5) { // 너무 얕은 스쿼트
-      feedback.push('더 깊게 앉아주세요.');
-    } else if (avgKneeAngle > 1.2) { // 너무 깊은 스쿼트
-      feedback.push('너무 깊게 앉지 마세요.');
+    if (!bodyStraight) {
+      feedback.push('몸을 일직선으로 유지하세요.');
     } else {
       score += 25;
     }
 
-    // 3. 등이 곧은지 확인
-    const backStraight = Math.abs(lh.y - ls.y) < 0.1 && Math.abs(rh.y - rs.y) < 0.1;
-    if (!backStraight) {
-      feedback.push('등을 곧게 펴주세요.');
+    // 2. 엉덩이가 올라가지 않았는지 확인
+    const leftHipHeight = lh.y;
+    const rightHipHeight = rh.y;
+    const shoulderHeight = (ls.y + rs.y) / 2;
+    const hipTooHigh = (leftHipHeight < shoulderHeight - 0.05) || (rightHipHeight < shoulderHeight - 0.05);
+    
+    if (hipTooHigh) {
+      feedback.push('엉덩이가 올라가지 않도록 하세요.');
     } else {
       score += 25;
     }
 
-    // 4. 발꿈치가 바닥에 닿아있는지 확인
-    const heelsOnGround = la.y > 0.9 && ra.y > 0.9;
-    if (!heelsOnGround) {
-      feedback.push('발꿈치를 바닥에서 떼지 마세요.');
+    // 3. 팔꿈치가 어깨 아래에 있는지 확인
+    const leftElbowUnderShoulder = le.y > ls.y;
+    const rightElbowUnderShoulder = re.y > rs.y;
+    const elbowsPositioned = leftElbowUnderShoulder && rightElbowUnderShoulder;
+    
+    if (!elbowsPositioned) {
+      feedback.push('팔꿈치를 어깨 아래에 위치시키세요.');
+    } else {
+      score += 25;
+    }
+
+    // 4. 머리가 자연스럽게 유지되는지 확인
+    const headNeutral = Math.abs(ls.y - rs.y) < 0.1;
+    if (!headNeutral) {
+      feedback.push('머리를 자연스럽게 유지하세요.');
     } else {
       score += 25;
     }
 
     // 결과 반환
     if (feedback.length === 0) {
-      return `완벽한 스쿼트 자세입니다! (점수: ${score}/100)`;
+      return `완벽한 플랭크 자세입니다! (점수: ${score}/100)`;
     } else {
       return `${feedback.join(' ')} (점수: ${score}/100)`;
     }
@@ -361,14 +366,14 @@ const WorkoutSession: React.FC = () => {
 
       <div className="feedback-section">
         <div className="feedback-display">
-          <h3>{exerciseId === 'squats' ? '자세 분석' : 'AI 피드백'}</h3>
+          <h3>{exerciseId === 'plank' ? '자세 분석' : 'AI 피드백'}</h3>
           <div className={`feedback-text ${isSpeaking ? 'speaking' : ''}`}>
-            {exerciseId === 'squats' 
-              ? (poseAnalysis || '스쿼트 자세를 분석하고 있습니다...')
+            {exerciseId === 'plank' 
+              ? (poseAnalysis || '플랭크 자세를 분석하고 있습니다...')
               : (currentFeedback || '운동을 시작하면 AI가 자세를 분석하고 피드백을 제공합니다.')
             }
           </div>
-          {exerciseId === 'squats' && isAnalyzing && (
+          {exerciseId === 'plank' && isAnalyzing && (
             <div className="analysis-status">
               <div className="loading-spinner"></div>
               <p>실시간 자세 분석 중...</p>
