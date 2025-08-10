@@ -34,10 +34,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "npx react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "postinstall": "npm install react-scripts@5.0.1 --no-save"
+    "postinstall": "npm install react-scripts@5.0.1 --no-save && npx react-scripts --version"
   },
   "eslintConfig": {
     "extends": [
@@ -50,6 +50,9 @@
     "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
   },
   "overrides": {
+    "react-scripts": "5.0.1"
+  },
+  "resolutions": {
     "react-scripts": "5.0.1"
   }
 }
