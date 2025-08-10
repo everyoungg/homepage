@@ -28,7 +28,7 @@ const AdvancedPoseAnalyzer: React.FC<AdvancedPoseAnalyzerProps> = ({
   };
 
   // 스쿼트 자세 분석
-  const analyzeSquatPose = (landmarks: PoseLandmark[]): PoseAnalysis => {
+  const analyzeSquatPose = useCallback((landmarks: PoseLandmark[]) => {
     const LEFT_HIP = 23;
     const LEFT_KNEE = 25;
     const LEFT_ANKLE = 27;
@@ -122,10 +122,10 @@ const AdvancedPoseAnalyzer: React.FC<AdvancedPoseAnalyzerProps> = ({
       posture,
       timestamp: Date.now()
     };
-  };
+  }, []);
 
   // 푸시업 자세 분석
-  const analyzePushupPose = (landmarks: PoseLandmark[]): PoseAnalysis => {
+  const analyzePushupPose = useCallback((landmarks: PoseLandmark[]) => {
     const LEFT_SHOULDER = 11;
     const LEFT_ELBOW = 13;
     const LEFT_WRIST = 15;
@@ -216,10 +216,10 @@ const AdvancedPoseAnalyzer: React.FC<AdvancedPoseAnalyzerProps> = ({
       posture,
       timestamp: Date.now()
     };
-  };
+  }, []);
 
   // 플랭크 자세 분석 (기존 코드 개선)
-  const analyzePlankPose = (landmarks: PoseLandmark[]): PoseAnalysis => {
+  const analyzePlankPose = useCallback((landmarks: PoseLandmark[]) => {
     const LEFT_SHOULDER = 11;
     const LEFT_HIP = 23;
     const LEFT_ANKLE = 27;
@@ -283,7 +283,7 @@ const AdvancedPoseAnalyzer: React.FC<AdvancedPoseAnalyzerProps> = ({
       posture,
       timestamp: Date.now()
     };
-  };
+  }, []);
 
   // 자세 분석 실행
   const runPoseAnalysis = useCallback(() => {
@@ -333,22 +333,10 @@ const AdvancedPoseAnalyzer: React.FC<AdvancedPoseAnalyzerProps> = ({
   }, [exerciseId, isActive, onAnalysisUpdate, analyzeSquatPose, analyzePushupPose, analyzePlankPose, videoRef, canvasRef]);
 
   useEffect(() => {
-    if (isActive && !isAnalyzing) {
-      setIsAnalyzing(true);
+    if (isActive && exerciseId) {
       runPoseAnalysis();
-    } else if (!isActive && isAnalyzing) {
-      setIsAnalyzing(false);
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
     }
-
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [isActive, exerciseId]);
+  }, [isActive, exerciseId, runPoseAnalysis]);
 
   return null; // 이 컴포넌트는 UI를 렌더링하지 않고 분석만 수행
 };
