@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { PoseLandmark, JointAngle, PoseAnalysis } from '../types';
 
 interface AdvancedPoseAnalyzerProps {
@@ -221,25 +221,17 @@ const AdvancedPoseAnalyzer: React.FC<AdvancedPoseAnalyzerProps> = ({
   // 플랭크 자세 분석 (기존 코드 개선)
   const analyzePlankPose = (landmarks: PoseLandmark[]): PoseAnalysis => {
     const LEFT_SHOULDER = 11;
-    const LEFT_ELBOW = 13;
     const LEFT_HIP = 23;
-    const LEFT_KNEE = 25;
     const LEFT_ANKLE = 27;
     const RIGHT_SHOULDER = 12;
-    const RIGHT_ELBOW = 14;
     const RIGHT_HIP = 24;
-    const RIGHT_KNEE = 26;
     const RIGHT_ANKLE = 28;
 
     const ls = landmarks[LEFT_SHOULDER];
-    const le = landmarks[LEFT_ELBOW];
     const lh = landmarks[LEFT_HIP];
-    const lk = landmarks[LEFT_KNEE];
     const la = landmarks[LEFT_ANKLE];
     const rs = landmarks[RIGHT_SHOULDER];
-    const re = landmarks[RIGHT_ELBOW];
     const rh = landmarks[RIGHT_HIP];
-    const rk = landmarks[RIGHT_KNEE];
     const ra = landmarks[RIGHT_ANKLE];
 
     let score = 0;
@@ -294,7 +286,7 @@ const AdvancedPoseAnalyzer: React.FC<AdvancedPoseAnalyzerProps> = ({
   };
 
   // 자세 분석 실행
-  const runPoseAnalysis = () => {
+  const runPoseAnalysis = useCallback(() => {
     if (!videoRef.current || !canvasRef.current || !isActive) return;
 
     const canvas = canvasRef.current;
@@ -338,7 +330,7 @@ const AdvancedPoseAnalyzer: React.FC<AdvancedPoseAnalyzerProps> = ({
     if (isActive) {
       animationFrameRef.current = requestAnimationFrame(runPoseAnalysis);
     }
-  };
+  }, [exerciseId, isActive, onAnalysisUpdate, analyzeSquatPose, analyzePushupPose, analyzePlankPose, videoRef, canvasRef]);
 
   useEffect(() => {
     if (isActive && !isAnalyzing) {

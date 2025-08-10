@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PoseAnalysis, JointAngle } from '../types';
+import { PoseAnalysis } from '../types';
 import '../styles/AdvancedFeedback.css';
 
 interface AdvancedFeedbackDisplayProps {

@@ -6,16 +6,9 @@ import { PoseAnalysis } from '../types';
 import '../styles/WorkoutSession.css';
 
 // MediaPipe Pose 모델 타입 정의
-interface PoseLandmark {
-  x: number;
-  y: number;
-  z: number;
-  visibility?: number;
-}
 
-interface PoseResults {
-  poseLandmarks: PoseLandmark[];
-}
+
+
 
 const WorkoutSession: React.FC = () => {
   const navigate = useNavigate();
@@ -23,12 +16,13 @@ const WorkoutSession: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
-  const [currentFeedback, setCurrentFeedback] = useState('');
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [poseAnalysis, setPoseAnalysis] = useState<PoseAnalysis | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const exerciseData = {
     plank: {
