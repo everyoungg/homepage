@@ -4,8 +4,8 @@
   "private": true,
   "homepage": ".",
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
+    "node": "18.x",
+    "npm": "8.x"
   },
   "dependencies": {
     "@mediapipe/camera_utils": "^0.3.1675466862",
@@ -47,10 +47,5 @@
   },
   "overrides": {
     "react-scripts": "5.0.1"
-  },
-  "vercel": {
-    "buildCommand": "npm run build",
-    "outputDirectory": "build",
-    "installCommand": "npm install"
   }
 }
