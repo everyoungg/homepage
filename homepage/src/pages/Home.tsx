@@ -108,8 +108,32 @@ const Home: React.FC = () => {
   return (
     <div className="home-container">
       <div className="home-header">
-        <h1>안녕하세요, {userName}님!</h1>
-        <p>오늘도 건강한 하루 되세요 💪</p>
+        <div className="logo-section">
+          <div className="robot-logo">
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+              {/* 로봇 머리 */}
+              <rect x="15" y="10" width="30" height="25" rx="5" stroke="white" strokeWidth="2" fill="none"/>
+              {/* 로봇 몸체 */}
+              <rect x="20" y="35" width="20" height="20" rx="3" stroke="white" strokeWidth="2" fill="none"/>
+              {/* 눈 */}
+              <circle cx="25" cy="22" r="2" fill="white"/>
+              <circle cx="35" cy="22" r="2" fill="white"/>
+              {/* 입 */}
+              <path d="M 28 28 Q 30 30 32 28" stroke="white" strokeWidth="2" fill="none"/>
+              {/* 안테나 */}
+              <line x1="30" y1="10" x2="30" y2="5" stroke="white" strokeWidth="2"/>
+              <circle cx="30" cy="5" r="1.5" fill="white"/>
+              {/* 팔 */}
+              <line x1="20" y1="40" x2="15" y2="45" stroke="white" strokeWidth="2"/>
+              <line x1="40" y1="40" x2="45" y2="35" stroke="white" strokeWidth="2"/>
+
+            </svg>
+          </div>
+          <div className="brand-text">
+            <h1>안녕하세요, {userName}님!</h1>
+            <p>오늘도 건강한 하루 되세요 💪</p>
+          </div>
+        </div>
       </div>
 
       <div className="weight-section">

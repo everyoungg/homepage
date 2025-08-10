@@ -45,4 +45,53 @@ export interface PoseLandmark {
 export interface PoseData {
   landmarks: PoseLandmark[];
   timestamp: number;
+}
+
+// 새로운 타입들 추가
+export interface JointAngle {
+  joint: string;
+  angle: number;
+  isCorrect: boolean;
+  feedback: string;
+}
+
+export interface PoseAnalysis {
+  score: number;
+  feedback: string[];
+  jointAngles: JointAngle[];
+  posture: 'excellent' | 'good' | 'fair' | 'poor';
+  timestamp: number;
+}
+
+export interface ExerciseFeedback {
+  id: string;
+  exerciseId: string;
+  userId: string;
+  sessionId: string;
+  poseAnalysis: PoseAnalysis;
+  audioFeedback: string;
+  visualFeedback: string;
+  createdAt: Date;
+}
+
+export interface ChatMessage {
+  id: string;
+  text: string;
+  isUser: boolean;
+  timestamp: Date;
+  type: 'text' | 'exercise_feedback' | 'pose_analysis' | 'workout_tip';
+  metadata?: {
+    exerciseId?: string;
+    poseScore?: number;
+    feedbackType?: string;
+  };
+}
+
+export interface WorkoutTip {
+  id: string;
+  category: string;
+  title: string;
+  content: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  tags: string[];
 } 

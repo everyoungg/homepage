@@ -1,0 +1,347 @@
+.feedback-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 24px;
+  margin: 20px 0;
+  color: white;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-placeholder {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.placeholder-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.feedback-placeholder h3 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.feedback-placeholder p {
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+/* 점수 섹션 */
+.score-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.score-circle {
+  width: 80px;
+  height: 80px;
+  border: 4px solid;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.score-number {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.score-label {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.posture-grade {
+  text-align: right;
+}
+
+.grade-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 현재 피드백 */
+.current-feedback {
+  margin-bottom: 24px;
+}
+
+.current-feedback h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.feedback-message {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.feedback-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.indicator-dot.active {
+  background: white;
+  transform: scale(1.2);
+}
+
+/* 관절 상세 정보 */
+.joint-details-section {
+  margin-bottom: 24px;
+}
+
+.toggle-joint-details {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle-joint-details:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.toggle-icon {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.joint-details {
+  margin-top: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.joint-details h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.joint-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.joint-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 12px;
+  border-left: 4px solid;
+  transition: all 0.3s ease;
+}
+
+.joint-item.correct {
+  border-left-color: #4CAF50;
+}
+
+.joint-item.incorrect {
+  border-left-color: #F44336;
+}
+
+.joint-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.joint-icon {
+  font-size: 20px;
+}
+
+.joint-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.joint-status {
+  font-size: 16px;
+}
+
+.joint-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.joint-angle {
+  font-size: 12px;
+  opacity: 0.8;
+  font-family: monospace;
+}
+
+.joint-feedback {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* 운동별 특화 피드백 */
+.exercise-specific-feedback {
+  margin-bottom: 24px;
+}
+
+.exercise-specific-feedback h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.tips-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tip-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.tip-icon {
+  font-size: 20px;
+}
+
+.tip-text {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* 진행률 표시 */
+.progress-section {
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .feedback-container {
+    padding: 20px;
+    margin: 16px 0;
+  }
+  
+  .score-section {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+  
+  .score-circle {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .score-number {
+    font-size: 20px;
+  }
+  
+  .feedback-message {
+    font-size: 14px;
+    padding: 14px;
+  }
+  
+  .joint-details {
+    padding: 16px;
+  }
+  
+  .tip-item {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .feedback-container {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  
+  .score-circle {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .score-number {
+    font-size: 18px;
+  }
+  
+  .score-label {
+    font-size: 10px;
+  }
+  
+  .grade-badge {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .feedback-message {
+    font-size: 13px;
+    padding: 12px;
+  }
+} 

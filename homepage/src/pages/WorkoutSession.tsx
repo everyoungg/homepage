@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import AdvancedPoseAnalyzer from '../components/AdvancedPoseAnalyzer';
+import AdvancedFeedbackDisplay from '../components/AdvancedFeedbackDisplay';
+import { PoseAnalysis } from '../types';
 import '../styles/WorkoutSession.css';
 
 // MediaPipe Pose 모델 타입 정의
@@ -14,7 +17,6 @@ interface PoseResults {
   poseLandmarks: PoseLandmark[];
 }
 
-
 const WorkoutSession: React.FC = () => {
   const navigate = useNavigate();
   const { categoryId, exerciseId } = useParams<{ categoryId: string; exerciseId: string }>();
@@ -25,7 +27,7 @@ const WorkoutSession: React.FC = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
-  const [poseAnalysis, setPoseAnalysis] = useState<string>('');
+  const [poseAnalysis, setPoseAnalysis] = useState<PoseAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const exerciseData = {
@@ -178,6 +180,7 @@ const WorkoutSession: React.FC = () => {
         videoRef.current.srcObject = stream;
         setIsCameraActive(true);
         setSessionStartTime(new Date());
+        setIsAnalyzing(true);
       }
     } catch (error) {
       console.error('카메라 접근 오류:', error);
@@ -190,6 +193,7 @@ const WorkoutSession: React.FC = () => {
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach(track => track.stop());
       setIsCameraActive(false);
+      setIsAnalyzing(false);
     }
   };
 
@@ -208,29 +212,18 @@ const WorkoutSession: React.FC = () => {
     }
   };
 
-  const generateFeedback = () => {
-    if (!currentExercise) return;
+  const handlePoseAnalysisUpdate = (analysis: PoseAnalysis) => {
+    setPoseAnalysis(analysis);
     
-    const randomIndex = Math.floor(Math.random() * currentExercise.feedbackMessages.length);
-    const feedback = currentExercise.feedbackMessages[randomIndex];
-    setCurrentFeedback(feedback);
-    speakFeedback(feedback);
+    // 음성 피드백 제공
+    if (analysis.feedback.length > 0) {
+      const randomFeedback = analysis.feedback[Math.floor(Math.random() * analysis.feedback.length)];
+      speakFeedback(randomFeedback);
+    }
   };
 
   const handleStartWorkout = () => {
     startCamera();
-    // 3초 후 첫 피드백 시작
-    setTimeout(() => {
-      if (exerciseId === 'plank') {
-        // 플랭크일 때는 자세 분석 시작
-        setIsAnalyzing(true);
-        setPoseAnalysis('플랭크 자세를 분석하고 있습니다...');
-      } else {
-        generateFeedback();
-        // 10초마다 피드백 업데이트
-        setInterval(generateFeedback, 10000);
-      }
-    }, 3000);
   };
 
   const handleEndWorkout = () => {
@@ -242,90 +235,6 @@ const WorkoutSession: React.FC = () => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  // 플랭크 자세 분석 함수
-  const analyzePlankPose = (landmarks: PoseLandmark[]) => {
-    if (!landmarks || landmarks.length < 33) return '자세를 인식할 수 없습니다.';
-
-    // MediaPipe Pose 인덱스
-    const LEFT_SHOULDER = 11;
-    const LEFT_ELBOW = 13;
-    const LEFT_WRIST = 15;
-    const LEFT_HIP = 23;
-    const LEFT_KNEE = 25;
-    const LEFT_ANKLE = 27;
-    const RIGHT_SHOULDER = 12;
-    const RIGHT_ELBOW = 14;
-    const RIGHT_WRIST = 16;
-    const RIGHT_HIP = 24;
-    const RIGHT_KNEE = 26;
-    const RIGHT_ANKLE = 28;
-
-    // 좌표 추출
-    const ls = landmarks[LEFT_SHOULDER];
-    const le = landmarks[LEFT_ELBOW];
-    const lh = landmarks[LEFT_HIP];
-    const lk = landmarks[LEFT_KNEE];
-    const la = landmarks[LEFT_ANKLE];
-    const rs = landmarks[RIGHT_SHOULDER];
-    const re = landmarks[RIGHT_ELBOW];
-    const rh = landmarks[RIGHT_HIP];
-    const rk = landmarks[RIGHT_KNEE];
-    const ra = landmarks[RIGHT_ANKLE];
-
-    // 분석 조건들
-    let feedback = [];
-    let score = 0;
-
-    // 1. 몸이 일직선인지 확인 (어깨-엉덩이-발목)
-    const leftAlignment = Math.abs(ls.y - lh.y) < 0.05 && Math.abs(lh.y - la.y) < 0.05;
-    const rightAlignment = Math.abs(rs.y - rh.y) < 0.05 && Math.abs(rh.y - ra.y) < 0.05;
-    const bodyStraight = leftAlignment && rightAlignment;
-    
-    if (!bodyStraight) {
-      feedback.push('몸을 일직선으로 유지하세요.');
-    } else {
-      score += 25;
-    }
-
-    // 2. 엉덩이가 올라가지 않았는지 확인
-    const leftHipHeight = lh.y;
-    const rightHipHeight = rh.y;
-    const shoulderHeight = (ls.y + rs.y) / 2;
-    const hipTooHigh = (leftHipHeight < shoulderHeight - 0.05) || (rightHipHeight < shoulderHeight - 0.05);
-    
-    if (hipTooHigh) {
-      feedback.push('엉덩이가 올라가지 않도록 하세요.');
-    } else {
-      score += 25;
-    }
-
-    // 3. 팔꿈치가 어깨 아래에 있는지 확인
-    const leftElbowUnderShoulder = le.y > ls.y;
-    const rightElbowUnderShoulder = re.y > rs.y;
-    const elbowsPositioned = leftElbowUnderShoulder && rightElbowUnderShoulder;
-    
-    if (!elbowsPositioned) {
-      feedback.push('팔꿈치를 어깨 아래에 위치시키세요.');
-    } else {
-      score += 25;
-    }
-
-    // 4. 머리가 자연스럽게 유지되는지 확인
-    const headNeutral = Math.abs(ls.y - rs.y) < 0.1;
-    if (!headNeutral) {
-      feedback.push('머리를 자연스럽게 유지하세요.');
-    } else {
-      score += 25;
-    }
-
-    // 결과 반환
-    if (feedback.length === 0) {
-      return `완벽한 플랭크 자세입니다! (점수: ${score}/100)`;
-    } else {
-      return `${feedback.join(' ')} (점수: ${score}/100)`;
-    }
   };
 
   return (
@@ -364,23 +273,21 @@ const WorkoutSession: React.FC = () => {
         )}
       </div>
 
-      <div className="feedback-section">
-        <div className="feedback-display">
-          <h3>{exerciseId === 'plank' ? '자세 분석' : 'AI 피드백'}</h3>
-          <div className={`feedback-text ${isSpeaking ? 'speaking' : ''}`}>
-            {exerciseId === 'plank' 
-              ? (poseAnalysis || '플랭크 자세를 분석하고 있습니다...')
-              : (currentFeedback || '운동을 시작하면 AI가 자세를 분석하고 피드백을 제공합니다.')
-            }
-          </div>
-          {exerciseId === 'plank' && isAnalyzing && (
-            <div className="analysis-status">
-              <div className="loading-spinner"></div>
-              <p>실시간 자세 분석 중...</p>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* 고도화된 피드백 표시 */}
+      <AdvancedFeedbackDisplay
+        poseAnalysis={poseAnalysis}
+        exerciseId={exerciseId || ''}
+        isActive={isCameraActive}
+      />
+
+      {/* 고도화된 자세 분석기 */}
+      <AdvancedPoseAnalyzer
+        videoRef={videoRef}
+        canvasRef={canvasRef}
+        exerciseId={exerciseId || ''}
+        onAnalysisUpdate={handlePoseAnalysisUpdate}
+        isActive={isCameraActive}
+      />
 
       <div className="instructions-section">
         <h3>운동 방법</h3>
