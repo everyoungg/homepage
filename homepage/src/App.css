@@ -1,10 +1,14 @@
 .App {
   text-align: center;
+  background: linear-gradient(135deg, #87CEEB 0%, #B0E0E6 50%, #E0F6FF 100%);
+  min-height: 100vh;
+  color: var(--text-dark);
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+  filter: drop-shadow(0 0 20px var(--shadow));
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -14,18 +18,26 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background: linear-gradient(135deg, var(--primary-sky) 0%, var(--secondary-sky) 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: var(--text-light);
+  box-shadow: 0 4px 20px var(--shadow);
 }
 
 .App-link {
-  color: #61dafb;
+  color: var(--accent-sky);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.App-link:hover {
+  color: var(--light-sky);
+  transform: translateY(-2px);
 }
 
 @keyframes App-logo-spin {
@@ -35,4 +47,50 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* 전역 컨테이너 스타일 */
+.container {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px var(--shadow);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 20px;
+  padding: 20px;
+}
+
+/* 전역 버튼 스타일 */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-sky) 0%, var(--accent-sky) 100%);
+  color: var(--text-light);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px var(--shadow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--text-dark);
+  border: 2px solid var(--primary-sky);
+  padding: 10px 22px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--primary-sky);
+  color: var(--text-light);
+  transform: translateY(-2px);
 }

@@ -1,64 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-} from 'chart.js';
 import '../styles/Home.css';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
-  const [currentWeight, setCurrentWeight] = useState(0);
-  const [weightData, setWeightData] = useState<any>(null);
 
   useEffect(() => {
     const storedName = localStorage.getItem('userName');
-    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
-    const weightRecords = JSON.parse(localStorage.getItem('weightRecords') || '[]');
-
     if (storedName) {
       setUserName(storedName);
-    }
-
-    if (userInfo.weight) {
-      setCurrentWeight(userInfo.weight);
-    }
-
-    if (weightRecords.length > 0) {
-      const chartData = {
-        labels: weightRecords.map((record: any) => {
-          const date = new Date(record.date);
-          return `${date.getMonth() + 1}/${date.getDate()}`;
-        }),
-        datasets: [
-          {
-            label: '체중 (kg)',
-            data: weightRecords.map((record: any) => record.weight),
-            borderColor: 'rgb(75, 192, 192)',
-            backgroundColor: 'rgba(75, 192, 192, 0.5)',
-            tension: 0.1
-          }
-        ]
-      };
-      setWeightData(chartData);
     }
   }, []);
 
@@ -70,128 +21,135 @@ const Home: React.FC = () => {
     navigate('/chat');
   };
 
-  const addWeightRecord = () => {
-    const newWeight = prompt('현재 체중을 입력해주세요 (kg):');
-    if (newWeight && !isNaN(parseFloat(newWeight))) {
-      const weightRecord = {
-        id: Date.now().toString(),
-        weight: parseFloat(newWeight),
-        date: new Date().toISOString()
-      };
+  const handleExerciseClick = () => {
+    navigate('/workout-exercises');
+  };
 
-      const existingRecords = JSON.parse(localStorage.getItem('weightRecords') || '[]');
-      existingRecords.push(weightRecord);
-      localStorage.setItem('weightRecords', JSON.stringify(existingRecords));
-
-      setCurrentWeight(parseFloat(newWeight));
-      
-      // 차트 데이터 업데이트
-      const chartData = {
-        labels: existingRecords.map((record: any) => {
-          const date = new Date(record.date);
-          return `${date.getMonth() + 1}/${date.getDate()}`;
-        }),
-        datasets: [
-          {
-            label: '체중 (kg)',
-            data: existingRecords.map((record: any) => record.weight),
-            borderColor: 'rgb(75, 192, 192)',
-            backgroundColor: 'rgba(75, 192, 192, 0.5)',
-            tension: 0.1
-          }
-        ]
-      };
-      setWeightData(chartData);
-    }
+  const handleSessionClick = () => {
+    navigate('/workout-session');
   };
 
   return (
     <div className="home-container">
-      <div className="home-header">
-        <div className="logo-section">
-          <div className="robot-logo">
-            <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-              {/* 로봇 머리 */}
-              <rect x="15" y="10" width="30" height="25" rx="5" stroke="white" strokeWidth="2" fill="none"/>
-              {/* 로봇 몸체 */}
-              <rect x="20" y="35" width="20" height="20" rx="3" stroke="white" strokeWidth="2" fill="none"/>
-              {/* 눈 */}
-              <circle cx="25" cy="22" r="2" fill="white"/>
-              <circle cx="35" cy="22" r="2" fill="white"/>
-              {/* 입 */}
-              <path d="M 28 28 Q 30 30 32 28" stroke="white" strokeWidth="2" fill="none"/>
-              {/* 안테나 */}
-              <line x1="30" y1="10" x2="30" y2="5" stroke="white" strokeWidth="2"/>
-              <circle cx="30" cy="5" r="1.5" fill="white"/>
-              {/* 팔 */}
-              <line x1="20" y1="40" x2="15" y2="45" stroke="white" strokeWidth="2"/>
-              <line x1="40" y1="40" x2="45" y2="35" stroke="white" strokeWidth="2"/>
+      <div className="hero-section">
+        <h1 className="hero-title">FitBuddy AI 트레이너</h1>
+        <p className="hero-subtitle">
+          {userName ? `${userName}님, 오늘도 건강한 하루 되세요! 💪` : 'AI와 함께하는 스마트한 운동 라이프'}
+        </p>
+        <p className="hero-subtitle">
+          실시간 자세 분석과 맞춤형 운동 가이드로 더 효과적인 운동을 경험해보세요
+        </p>
+      </div>
 
-            </svg>
-          </div>
-          <div className="brand-text">
-            <h1>안녕하세요, {userName}님!</h1>
-            <p>오늘도 건강한 하루 되세요 💪</p>
-          </div>
+      <div className="feature-grid">
+        <div className="feature-card">
+          <span className="feature-icon">🤖</span>
+          <h3 className="feature-title">AI 자세 분석</h3>
+          <p className="feature-description">
+            실시간으로 운동 자세를 분석하고 정확한 피드백을 제공합니다. 
+            카메라를 통해 관절 각도와 몸 정렬을 체크해보세요.
+          </p>
+        </div>
+
+        <div className="feature-card">
+          <span className="feature-icon">💪</span>
+          <h3 className="feature-title">맞춤 운동 추천</h3>
+          <p className="feature-description">
+            개인의 체력 수준과 목표에 맞는 운동을 추천합니다. 
+            초보자부터 고급자까지 단계별로 진행할 수 있어요.
+          </p>
+        </div>
+
+        <div className="feature-card">
+          <span className="feature-icon">📊</span>
+          <h3 className="feature-title">진행 상황 추적</h3>
+          <p className="feature-description">
+            운동 기록과 체중 변화를 차트로 확인할 수 있습니다. 
+            꾸준한 발전을 시각적으로 확인해보세요.
+          </p>
+        </div>
+
+        <div className="feature-card">
+          <span className="feature-icon">🎯</span>
+          <h3 className="feature-title">목표 달성</h3>
+          <p className="feature-description">
+            체계적인 운동 계획과 목표 설정으로 동기부여를 유지합니다. 
+            작은 성취를 통해 큰 목표를 달성해보세요.
+          </p>
+        </div>
+
+        <div className="feature-card">
+          <span className="feature-icon">🏥</span>
+          <h3 className="feature-title">부상 예방</h3>
+          <p className="feature-description">
+            올바른 자세와 안전한 운동 방법을 가이드합니다. 
+            부상 없이 건강하게 운동할 수 있어요.
+          </p>
+        </div>
+
+        <div className="feature-card">
+          <span className="feature-icon">🥗</span>
+          <h3 className="feature-title">건강 관리</h3>
+          <p className="feature-description">
+            운동과 영양에 대한 전문적인 조언을 제공합니다. 
+            종합적인 건강 관리를 도와드려요.
+          </p>
         </div>
       </div>
 
-      <div className="weight-section">
-        <div className="weight-info">
-          <h2>현재 체중</h2>
-          <div className="current-weight">
-            <span className="weight-number">{currentWeight}</span>
-            <span className="weight-unit">kg</span>
-          </div>
-          <button onClick={addWeightRecord} className="add-weight-btn">
-            체중 기록하기
+      <div className="stats-section">
+        <div className="stat-card">
+          <span className="stat-number">5+</span>
+          <div className="stat-label">지원 운동</div>
+        </div>
+        <div className="stat-card">
+          <span className="stat-number">24/7</span>
+          <div className="stat-label">AI 지원</div>
+        </div>
+        <div className="stat-card">
+          <span className="stat-number">100%</span>
+          <div className="stat-label">자세 분석</div>
+        </div>
+        <div className="stat-card">
+          <span className="stat-number">AI</span>
+          <div className="stat-label">실시간 피드백</div>
+        </div>
+      </div>
+
+      <div className="cta-section">
+        <h2 className="cta-title">지금 바로 시작해보세요!</h2>
+        <p className="cta-description">
+          FitBuddy AI 트레이너와 함께 더 스마트하고 효과적인 운동을 경험해보세요.
+          개인 맞춤형 운동 계획과 실시간 자세 분석으로 목표 달성을 도와드립니다.
+        </p>
+        <div className="cta-buttons">
+          <button onClick={handleWorkoutClick} className="cta-button">
+            🏃‍♂️ 운동 시작하기
+          </button>
+          <button onClick={handleChatClick} className="cta-button secondary">
+            💬 AI 트레이너와 상담
           </button>
         </div>
-
-        {weightData && (
-          <div className="weight-chart">
-            <h3>체중 변화 추이</h3>
-            <div className="chart-container">
-              <Line 
-                data={weightData}
-                options={{
-                  responsive: true,
-                  plugins: {
-                    legend: {
-                      position: 'top' as const,
-                    },
-                    title: {
-                      display: false,
-                    },
-                  },
-                  scales: {
-                    y: {
-                      beginAtZero: false,
-                    },
-                  },
-                }}
-              />
-            </div>
-          </div>
-        )}
       </div>
 
-      <div className="action-buttons">
-        <button onClick={handleWorkoutClick} className="workout-btn">
-          <div className="btn-icon">🏋️</div>
-          <div className="btn-text">
-            <h3>운동하기</h3>
-            <p>AI와 함께 운동해보세요</p>
-          </div>
-        </button>
+      <div className="feature-grid">
+        <div className="feature-card" onClick={handleExerciseClick}>
+          <span className="feature-icon">📋</span>
+          <h3 className="feature-title">운동 목록</h3>
+          <p className="feature-description">
+            다양한 운동 종류와 방법을 확인하고 
+            원하는 운동을 선택해보세요.
+          </p>
+        </div>
 
-        <button onClick={handleChatClick} className="chat-btn">
-          <div className="btn-icon">💬</div>
-          <div className="btn-text">
-            <h3>채팅하기</h3>
-            <p>운동 관련 질문을 해보세요</p>
-          </div>
-        </button>
+        <div className="feature-card" onClick={handleSessionClick}>
+          <span className="feature-icon">🎥</span>
+          <h3 className="feature-title">실시간 세션</h3>
+          <p className="feature-description">
+            카메라를 통해 실시간으로 운동 자세를 분석하고 
+            즉시 피드백을 받아보세요.
+          </p>
+        </div>
       </div>
     </div>
   );

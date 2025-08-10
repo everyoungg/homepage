@@ -79,7 +79,7 @@ export interface ChatMessage {
   text: string;
   isUser: boolean;
   timestamp: Date;
-  type: 'text' | 'exercise_feedback' | 'pose_analysis' | 'workout_tip';
+  type: 'text' | 'exercise_feedback' | 'pose_analysis' | 'workout_tip' | 'workout_recommendation' | 'health_tip';
   metadata?: {
     exerciseId?: string;
     poseScore?: number;
@@ -94,4 +94,49 @@ export interface WorkoutTip {
   content: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   tags: string[];
+}
+
+// 음성 인식 관련 타입 추가
+export interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
+}
+
+export interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+}
+
+export interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+}
+
+export interface SpeechRecognitionResultList {
+  readonly length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+export interface SpeechRecognitionResult {
+  readonly length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+  isFinal: boolean;
+}
+
+export interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+// Window 인터페이스 확장
+declare global {
+  interface Window {
+    SpeechRecognition?: new () => SpeechRecognition;
+    webkitSpeechRecognition?: new () => SpeechRecognition;
+  }
 } 

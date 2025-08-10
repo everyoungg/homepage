@@ -5,9 +5,42 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #87CEEB 0%, #B0E0E6 50%, #E0F6FF 100%);
+  min-height: 100vh;
+  color: #2c3e50;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* 전역 하늘색 테마 변수 */
+:root {
+  --primary-sky: #87CEEB;
+  --secondary-sky: #B0E0E6;
+  --light-sky: #E0F6FF;
+  --dark-sky: #4682B4;
+  --accent-sky: #00BFFF;
+  --text-dark: #2c3e50;
+  --text-light: #ffffff;
+  --shadow: rgba(135, 206, 235, 0.3);
+}
+
+/* 전역 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-sky);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-sky);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-sky);
 }
