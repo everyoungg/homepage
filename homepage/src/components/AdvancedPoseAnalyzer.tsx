@@ -268,44 +268,7 @@ const AdvancedPoseAnalyzer: React.FC<AdvancedPoseAnalyzerProps> = ({
       feedback.push('몸을 일직선으로 유지하세요.');
     }
 
-    // 팔꿈치 각도 분석 (90도가 적정)
-    const leftElbowAngle = calculateAngle(ls, le, lw);
-    const rightElbowAngle = calculateAngle(rs, re, rw);
-    
-    if (Math.abs(leftElbowAngle - 90) <= 15) {
-      score += 25;
-      jointAngles.push({
-        joint: 'left_elbow',
-        angle: leftElbowAngle,
-        isCorrect: true,
-        feedback: '완벽한 팔꿈치 각도입니다!'
-      });
-    } else {
-      jointAngles.push({
-        joint: 'left_elbow',
-        angle: leftElbowAngle,
-        isCorrect: false,
-        feedback: '팔꿈치를 90도로 유지하세요.'
-      });
-      feedback.push('팔꿈치를 90도로 유지하세요.');
-    }
-
-    if (Math.abs(rightElbowAngle - 90) <= 15) {
-      score += 25;
-      jointAngles.push({
-        joint: 'right_elbow',
-        angle: rightElbowAngle,
-        isCorrect: true,
-        feedback: '완벽한 팔꿈치 각도입니다!'
-      });
-    } else {
-      jointAngles.push({
-        joint: 'right_elbow',
-        angle: rightElbowAngle,
-        isCorrect: false,
-        feedback: '팔꿈치를 90도로 유지하세요.'
-      });
-    }
+    // 스쿼트에서는 팔꿈치 각도 분석을 하지 않음 (팔을 앞으로 뻗는 동작이므로)
 
     // 엉덩이 높이 확인
     const hipTooHigh = (lh.y < ls.y - 0.05) || (rh.y < rs.y - 0.05);
