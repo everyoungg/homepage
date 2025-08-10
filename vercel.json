@@ -1,1 +1,11 @@
-﻿{ "version": 2, "rootDirectory": "homepage" }
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "framework": "create-react-app",
+  "installCommand": "cd homepage && npm ci || (cd homepage && npm install)",
+  "buildCommand": "cd homepage && npm run build",
+  "outputDirectory": "homepage/build",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}
