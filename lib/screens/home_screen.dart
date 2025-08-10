@@ -6,9 +6,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFE3F2FD), // 연한 하늘색 배경
       appBar: AppBar(
         title: const Text('홈'),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFF1976D2), // 진한 하늘색
         foregroundColor: Colors.white,
       ),
       body: Center(

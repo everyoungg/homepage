@@ -6,9 +6,10 @@ class WorkoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFE3F2FD), // 연한 하늘색 배경
       appBar: AppBar(
         title: const Text('운동'),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFF1976D2), // 진한 하늘색
         foregroundColor: Colors.white,
       ),
       body: ListView(
@@ -46,7 +47,7 @@ class WorkoutScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, size: 24, color: Colors.blue),
+                Icon(icon, size: 24, color: const Color(0xFF1976D2)), // 진한 하늘색
                 const SizedBox(width: 8),
                 Text(
                   title,
@@ -62,7 +63,7 @@ class WorkoutScreen extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 8),
               child: Row(
                 children: [
-                  const Icon(Icons.arrow_right, color: Colors.blue),
+                  const Icon(Icons.arrow_right, color: Color(0xFF1976D2)), // 진한 하늘색
                   const SizedBox(width: 8),
                   Text(
                     exercise,

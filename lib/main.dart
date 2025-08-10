@@ -25,23 +25,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Fit Buddy',
         theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // TRY THIS: Try running your application with "flutter run". You'll see
-          // the application has a purple toolbar. Then, without quitting the app,
-          // try changing the seedColor in the colorScheme below to Colors.green
-          // and then invoke "hot reload" (save your changes or press the "hot
-          // reload" button in a Flutter-supported IDE, or press "r" if you used
-          // the command line to start the app).
-          //
-          // Notice that the counter didn't reset back to zero; the application
-          // state is not lost during the reload. To reset the state, use hot
-          // restart instead.
-          //
-          // This works for code too, not just values: Most code changes can be
-          // tested with just a hot reload.
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1976D2)), // 진한 하늘색
           useMaterial3: true,
+          scaffoldBackgroundColor: const Color(0xFFE3F2FD), // 연한 하늘색 배경
         ),
         home: const WelcomeScreen(),
       ),
@@ -78,7 +64,7 @@ class WelcomeScreen extends StatelessWidget {
               child: const Text('시작하기', style: TextStyle(fontSize: 20)),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
-                backgroundColor: Colors.blue,
+                backgroundColor: const Color(0xFF1976D2), // 진한 하늘색
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

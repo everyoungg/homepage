@@ -17,9 +17,10 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFE3F2FD), // 연한 하늘색 배경
       appBar: AppBar(
         title: const Text('정보 입력'),
-        backgroundColor: const Color(0xFF223355),
+        backgroundColor: const Color(0xFF1976D2), // 진한 하늘색
         foregroundColor: Colors.white,
       ),
       body: Padding(
@@ -87,7 +88,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF223355),
+                  backgroundColor: const Color(0xFF1976D2), // 진한 하늘색
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
