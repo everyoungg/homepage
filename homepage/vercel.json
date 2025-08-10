@@ -1,10 +1,14 @@
 {
   "version": 2,
-      (echo { "version": 2, "rootDirectory": "homepage" })>vercel.json
-      git add vercel.json
-      git commit -m "Set rootDirectory=homepage and remove builds"
-      git push
-
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build",
+        "installCommand": "npm ci --legacy-peer-deps",
+        "buildCommand": "npm run build"
+      }
     }
   ],
   "routes": [
@@ -37,4 +41,4 @@
       "dest": "/index.html"
     }
   ]
-} 
+}

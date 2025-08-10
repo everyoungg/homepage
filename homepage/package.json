@@ -2,9 +2,10 @@
   "name": "fitbuddy",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "engines": {
-    "node": "18.x",
-    "npm": "8.x"
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   },
   "dependencies": {
     "@mediapipe/camera_utils": "^0.3.1675466862",
@@ -31,6 +32,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "CI=false react-scripts build",
+    "vercel-build": "npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
