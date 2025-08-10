@@ -57,7 +57,7 @@ const WorkoutExercises: React.FC = () => {
     ],
     abs: [
       {
-        id: 'crunches',
+        id: 'crunch',
         name: '크런치',
         description: '복근을 집중적으로 강화',
         difficulty: '초급',

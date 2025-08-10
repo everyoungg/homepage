@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'exercise_feedback_screen.dart';
 
 class WorkoutScreen extends StatelessWidget {
   const WorkoutScreen({super.key});
@@ -25,6 +26,12 @@ class WorkoutScreen extends StatelessWidget {
             '근력 운동',
             ['스쿼트', '플랭크', '푸시업', '덤벨 운동'],
             Icons.fitness_center,
+            [
+              {'name': '푸시업', 'type': 'pushup', 'hasFeedback': true},
+              {'name': '크런치', 'type': 'crunch', 'hasFeedback': true},
+              {'name': '업라이트로우', 'type': 'uprightrow', 'hasFeedback': true},
+              {'name': '스쿼트', 'type': 'squat', 'hasFeedback': false},
+            ],
           ),
           const SizedBox(height: 16),
           _buildWorkoutCard(
@@ -37,7 +44,7 @@ class WorkoutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWorkoutCard(String title, List<String> exercises, IconData icon) {
+  Widget _buildWorkoutCard(String title, List<String> exercises, IconData icon, [List<Map<String, dynamic>>? detailedExercises]) {
     return Card(
       elevation: 4,
       child: Padding(
@@ -59,21 +66,51 @@ class WorkoutScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            ...exercises.map((exercise) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
-                  const Icon(Icons.arrow_right, color: Color(0xFF1976D2)), // 진한 하늘색
-                  const SizedBox(width: 8),
-                  Text(
-                    exercise,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
-            )),
+            ...(detailedExercises != null 
+                ? detailedExercises.map((exercise) => _buildExerciseItem(exercise))
+                : exercises.map((exercise) => _buildExerciseItem({'name': exercise, 'type': exercise.toLowerCase(), 'hasFeedback': false}))
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildExerciseItem(Map<String, dynamic> exercise) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          const Icon(Icons.arrow_right, color: Color(0xFF1976D2)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              exercise['name'],
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+          if (exercise['hasFeedback'] == true)
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ExerciseFeedbackScreen(
+                      exerciseType: exercise['type'],
+                      exerciseName: exercise['name'],
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1976D2),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                minimumSize: const Size(0, 32),
+              ),
+              child: const Text('자세 교정'),
+            ),
+        ],
       ),
     );
   }

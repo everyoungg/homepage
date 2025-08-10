@@ -67,6 +67,9 @@ const AdvancedFeedbackDisplay: React.FC<AdvancedFeedbackDisplayProps> = ({
       case 'left_elbow':
       case 'right_elbow': return '💪';
       case 'body_alignment': return '📏';
+      case 'left_torso':
+      case 'right_torso': return '🫁';
+      case 'shoulder_height': return '🏋️';
       default: return '🔗';
     }
   };
